@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: Groovie
+  datasource:
+    url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5432}/${POSTGRESQL_DB:GroovieBackend}
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRESQL_PASSWORD:changeme}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    generate-ddl: true
+  security:
+    user:
+      name: ${ADMIN_NAME:Hieu}
+      password: ${ADMIN_PASSWORD:210503}
