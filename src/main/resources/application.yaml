@@ -8,6 +8,8 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     generate-ddl: true
+    hibernate:
+      ddl-auto: update
   security:
     user:
       name: ${ADMIN_NAME:Hieu}
