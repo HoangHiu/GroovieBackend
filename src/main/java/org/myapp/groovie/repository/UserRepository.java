@@ -1,6 +1,6 @@
 package org.myapp.groovie.repository;
 
-import org.myapp.groovie.entity.User;
+import org.myapp.groovie.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

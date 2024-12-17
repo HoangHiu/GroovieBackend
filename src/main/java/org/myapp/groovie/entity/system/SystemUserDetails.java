@@ -1,12 +1,14 @@
-package org.myapp.groovie.entity;
+package org.myapp.groovie.entity.system;
 
 import lombok.AllArgsConstructor;
+import org.myapp.groovie.entity.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class SystemUserDetails implements UserDetails {
@@ -14,7 +16,9 @@ public class SystemUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("USER"));
+        return user.getGroups().stream()
+                .map(group -> new SimpleGrantedAuthority("ROLE_" + group.getRole()))
+                .collect(Collectors.toSet());
     }
 
     @Override

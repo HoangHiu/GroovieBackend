@@ -1,7 +1,7 @@
 package org.myapp.groovie.service;
 
-import org.myapp.groovie.entity.SystemUserDetails;
-import org.myapp.groovie.entity.User;
+import org.myapp.groovie.entity.system.SystemUserDetails;
+import org.myapp.groovie.entity.user.User;
 import org.myapp.groovie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
