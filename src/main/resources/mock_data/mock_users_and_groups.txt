@@ -1,0 +1,29 @@
+select * from users
+alter table users drop column role
+
+delete from users
+
+INSERT INTO users (uuid, password, username) VALUES
+('123e4567-e89b-12d3-a456-426614174000', '$2a$12$7KAGFntwvbUEWB0X2Wc82Oh/.Wca.KmPKMXR2VAD7hAisOUnjb4Ia', 'hieuAdmin'),
+('223e4567-e89b-12d3-a456-426614174001', '$2a$12$7KAGFntwvbUEWB0X2Wc82Oh/.Wca.KmPKMXR2VAD7hAisOUnjb4Ia', 'hieuModerator'),
+('323e4567-e89b-12d3-a456-426614174002', '$2a$12$7KAGFntwvbUEWB0X2Wc82Oh/.Wca.KmPKMXR2VAD7hAisOUnjb4Ia', 'hieuArtist'),
+('423e4567-e89b-12d3-a456-426614174003', '$2a$12$7KAGFntwvbUEWB0X2Wc82Oh/.Wca.KmPKMXR2VAD7hAisOUnjb4Ia', 'hieuRegular');
+
+select * from groups
+drop table user_group
+drop table groups
+
+
+INSERT INTO groups (uuid, description, name, slug) VALUES
+('550e8400-e29b-41d4-a716-446655440000', 'Admin description', 'Admin', 'ADMIN'),
+('660e8400-e29b-41d4-a716-446655440001', 'Moderator item description', 'Moderator', 'MODERATOR'),
+('770e8400-e29b-41d4-a716-446655440002', 'Artist item description', 'Artist', 'ARTIST'),
+('880e8400-e29b-41d4-a716-446655440003', 'Regular item description', 'Regular', 'REGULAR');
+
+select * from user_group
+insert into user_group(user_uuid, group_uuid) values
+('123e4567-e89b-12d3-a456-426614174000', '550e8400-e29b-41d4-a716-446655440000'),
+('123e4567-e89b-12d3-a456-426614174000', '660e8400-e29b-41d4-a716-446655440001'),
+('123e4567-e89b-12d3-a456-426614174000', '770e8400-e29b-41d4-a716-446655440002'),
+('123e4567-e89b-12d3-a456-426614174000', '880e8400-e29b-41d4-a716-446655440003'),
+('423e4567-e89b-12d3-a456-426614174003', '880e8400-e29b-41d4-a716-446655440003');
