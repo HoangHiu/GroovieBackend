@@ -1,4 +1,4 @@
-package org.myapp.groovie.dtos.in;
+package org.myapp.groovie.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

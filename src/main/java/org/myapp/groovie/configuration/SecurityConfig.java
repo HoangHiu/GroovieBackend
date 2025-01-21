@@ -1,5 +1,6 @@
 package org.myapp.groovie.configuration;
 
+import org.myapp.groovie.filter.JwtFilter;
 import org.myapp.groovie.service.SystemUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,11 +16,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
     @Autowired
     SystemUserDetailService systemUserDetailService;
+
+    @Autowired
+    JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -31,6 +36,7 @@ public class SecurityConfig {
                         requests.requestMatchers("/hello").permitAll()
                                 .requestMatchers("/auth/login").permitAll()
                                 .requestMatchers("/user").hasAnyRole("ADMIN", "MODERATOR"))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

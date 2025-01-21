@@ -1,6 +1,6 @@
 package org.myapp.groovie.service;
 
-import org.myapp.groovie.dtos.in.UserDtoIn;
+import org.myapp.groovie.dto.UserDtoIn;
 import org.myapp.groovie.entity.user.User;
 import org.myapp.groovie.repository.UserRepository;
 import org.myapp.groovie.response.ApiCallException;
@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
