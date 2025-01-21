@@ -29,7 +29,7 @@ public class HelloController {
             if(inputInt == 1){
                 throw new ApiCallException("dis shit error", HttpStatus.BAD_REQUEST);
             }
-            return new ApiCallResponse<>("dataaaaaa");
+            return new ApiCallResponse<>("data");
         });
     }
 }
