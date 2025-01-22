@@ -35,7 +35,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests ->
                         requests.requestMatchers("/hello").permitAll()
                                 .requestMatchers("/auth/login").permitAll()
-                                .requestMatchers("/v1/mvc/login/get").permitAll()
                                 .requestMatchers("/user").hasAnyRole("ADMIN", "MODERATOR"))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
