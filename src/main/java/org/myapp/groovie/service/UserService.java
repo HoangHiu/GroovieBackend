@@ -1,6 +1,6 @@
 package org.myapp.groovie.service;
 
-import org.myapp.groovie.dto.UserDtoIn;
+import org.myapp.groovie.dto.in.UserDtoIn;
 import org.myapp.groovie.entity.user.User;
 import org.myapp.groovie.repository.UserRepository;
 import org.myapp.groovie.response.ApiCallException;
