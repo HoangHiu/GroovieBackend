@@ -2,33 +2,78 @@ package org.myapp.groovie.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.myapp.groovie.dto.in.SongDtoIn;
+import org.myapp.groovie.entity.album.Album;
+import org.myapp.groovie.entity.song.Genre;
 import org.myapp.groovie.entity.song.Song;
+import org.myapp.groovie.repository.AlbumRepository;
+import org.myapp.groovie.repository.GenreRepository;
 import org.myapp.groovie.repository.SongRepository;
+import org.myapp.groovie.response.ApiCallException;
+import org.myapp.groovie.service.itf.IAlbumService;
+import org.myapp.groovie.service.itf.IGenreService;
 import org.myapp.groovie.service.itf.ISongService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class SongServiceImpl implements ISongService {
     private final SongRepository songRepository;
+    private final GenreRepository genreRepository;
+    private final AlbumRepository albumRepository;
+
+    private final IGenreService genreService;
+    private final IAlbumService albumService;
 
     @Override
-    public Song getOneSong(UUID songId) {
-        return null;
+    public Song getOneSong(UUID songId) throws ApiCallException {
+        Optional<Song> song = songRepository.findById(songId);
+        if(song.isPresent()){
+            return song.get();
+        }
+        throw new ApiCallException("No song with id:" + songId, HttpStatus.NOT_FOUND);
     }
 
     @Override
-    public List<Song> getAllSongs() {
-        return songRepository.findAll();
+    public List<Song> getAllSongs() throws ApiCallException {
+        List<Song> songList = songRepository.findAll();
+        if (!songList.isEmpty()){
+            return songList;
+        }
+        throw new ApiCallException("No song found", HttpStatus.NOT_FOUND);
     }
 
     @Override
-    public Song createSong(SongDtoIn songDtoIn) {
-        return null;
+    public Song createSong(SongDtoIn songDtoIn) throws ApiCallException {
+        Song songCreate = Song.fromSongDtoIn(songDtoIn);
+
+        //init default values
+        songCreate.setUuid(UUID.randomUUID());
+        songCreate.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+        // relation values
+        List<UUID> genreIds = songDtoIn.getGenreIds().stream().map(UUID::fromString).toList();
+        UUID albumId = UUID.fromString(songDtoIn.getAlbumId());
+
+        //get relations
+        List<Genre> newGenre = genreService.getGenresBasedOnIds(genreIds);
+        Album newAlbum = albumService.getOneAlbum(albumId);
+
+        //add to relations
+        songCreate.addToGenres((new HashSet<>(newGenre)));
+        songCreate.addToAlbum(newAlbum);
+
+        //save relations
+        genreRepository.saveAll(newGenre);
+        albumRepository.save(newAlbum);
+        songRepository.save(songCreate);
+
+        return songCreate;
     }
 
     @Override

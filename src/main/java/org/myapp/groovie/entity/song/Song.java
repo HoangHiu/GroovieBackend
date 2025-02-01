@@ -1,9 +1,11 @@
 package org.myapp.groovie.entity.song;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.myapp.groovie.dto.in.SongDtoIn;
 import org.myapp.groovie.entity.album.Album;
 
 import java.sql.Timestamp;
@@ -16,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "songs")
 public class Song {
@@ -32,8 +35,8 @@ public class Song {
     @Column(name = "file_size")
     float fileSize;
 
-    @Column(name = "language")
-    String language;
+    @Column(name = "languages")
+    String languages;
 
     @Column(name = "play_count")
     long playCount;
@@ -49,6 +52,7 @@ public class Song {
 //Album
     @ManyToOne
     @JoinColumn(name = "album_uuid")
+    @JsonManagedReference
     Album album;
 
 //  Creation stuff
@@ -61,5 +65,19 @@ public class Song {
     public void addToAlbum(Album album){
         this.album = album;
         album.getSongs().add(this);
+    }
+
+    public void addToGenres(Set<Genre> genres){
+        this.genres = genres;
+        genres.stream().map(g -> g.getSongs().add(this));
+    }
+
+    public static Song fromSongDtoIn(SongDtoIn songDtoIn){
+        return Song.builder()
+                .title(songDtoIn.getTitle())
+                .duration(songDtoIn.getDuration())
+                .fileSize(songDtoIn.getFileSize())
+                .languages(songDtoIn.getLanguages())
+                .build();
     }
 }

@@ -1,5 +1,7 @@
 package org.myapp.groovie.entity.album;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -33,9 +35,10 @@ public class Album {
     @Column(name = "release_year")
     int releaseYear;
 
-//Relation
-//Song
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "albums")
+    //Relation
+    //Song
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "uuid")
+    @JsonBackReference
     Set<Song> songs;
 
     //  Creation stuff

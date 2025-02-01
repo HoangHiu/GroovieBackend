@@ -1,0 +1,9 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+INSERT INTO albums (uuid, created_at, description, release_year, title, total_duration, updated_at)
+VALUES
+  (gen_random_uuid(), '2025-01-25 10:00:00', 'An album showcasing rhythmic beats and lyrics', 2023, 'Beats & Rhymes', 3200, '2025-01-25 12:00:00'),
+  (gen_random_uuid(), '2025-01-25 10:05:00', 'A compilation of harmonious vocals', 2021, 'Harmony Hits', 2700, '2025-01-25 12:05:00'),
+  (gen_random_uuid(), '2025-01-25 10:10:00', 'Classical compositions from the masters', 2019, 'Classical Essentials', 3600, '2025-01-25 12:10:00'),
+  (gen_random_uuid(), '2025-01-25 10:15:00', 'A collection of rock anthems', 2020, 'Rock Revival', 4200, '2025-01-25 12:15:00'),
+  (gen_random_uuid(), '2025-01-25 10:20:00', 'Soulful jazz melodies', 2022, 'Jazz Journey', 3100, '2025-01-25 12:20:00');

@@ -1,0 +1,9 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+INSERT INTO genres (uuid, created_at, created_by, description, name, slug, updated_at, updated_by)
+VALUES
+  (gen_random_uuid(), '2025-01-25 10:00:00', gen_random_uuid(), 'A genre focused on rhythm and beats', 'Hip Hop', 'hip-hop', '2025-01-25 12:00:00', gen_random_uuid()),
+  (gen_random_uuid(), '2025-01-25 10:05:00', gen_random_uuid(), 'A genre with strong vocals and harmony', 'Pop', 'pop', '2025-01-25 12:05:00', gen_random_uuid()),
+  (gen_random_uuid(), '2025-01-25 10:10:00', gen_random_uuid(), 'A genre with classical orchestration', 'Classical', 'classical', '2025-01-25 12:10:00', gen_random_uuid()),
+  (gen_random_uuid(), '2025-01-25 10:15:00', gen_random_uuid(), 'A genre with aggressive guitar riffs', 'Rock', 'rock', '2025-01-25 12:15:00', gen_random_uuid()),
+  (gen_random_uuid(), '2025-01-25 10:20:00', gen_random_uuid(), 'A genre with soulful lyrics and melody', 'Jazz', 'jazz', '2025-01-25 12:20:00', gen_random_uuid());
