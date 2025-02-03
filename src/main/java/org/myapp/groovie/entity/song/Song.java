@@ -50,7 +50,7 @@ public class Song {
     @JsonManagedReference
     Set<Genre> genres;
 //Album
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "album_uuid")
     @JsonManagedReference
     Album album;
@@ -70,6 +70,14 @@ public class Song {
     public void addToGenres(Set<Genre> genres){
         this.genres = genres;
         genres.stream().map(g -> g.getSongs().add(this));
+    }
+
+    public void removeFromAlbum(Album album){
+        album.getSongs().remove(this);
+    }
+
+    public void removeFromGenres(Set<Genre> genres){
+        genres.stream().map(g -> g.getSongs().remove(this));
     }
 
     public static Song fromSongDtoIn(SongDtoIn songDtoIn){

@@ -12,13 +12,11 @@ import org.myapp.groovie.response.ApiCallException;
 import org.myapp.groovie.service.itf.IAlbumService;
 import org.myapp.groovie.service.itf.IGenreService;
 import org.myapp.groovie.service.itf.ISongService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -77,12 +75,43 @@ public class SongServiceImpl implements ISongService {
     }
 
     @Override
-    public Song updateSong(UUID songId, SongDtoIn songDtoIn) {
-        return null;
+    public Song updateSong(UUID songId, SongDtoIn songDtoIn) throws ApiCallException {
+        Song songUpdate = Song.fromSongDtoIn(songDtoIn);
+        Song songOrg = this.getOneSong(songId);
+
+        //set initial values
+        songUpdate.setCreatedAt(songOrg.getCreatedAt());
+        songUpdate.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+        //get relation ids
+        List<UUID> genreIds = songDtoIn.getGenreIds().stream().map(UUID::fromString).toList();
+        UUID albumId = UUID.fromString(songDtoIn.getAlbumId());
+
+        //get relations values
+        List<Genre> newGenres = genreService.getGenresBasedOnIds(genreIds);
+        Album newAlbum = albumService.getOneAlbum(albumId);
+
+        //remove original relation values
+        songUpdate.removeFromAlbum(songOrg.getAlbum());
+        songUpdate.removeFromGenres(songOrg.getGenres());
+
+        //set new relation values
+        songUpdate.addToAlbum(newAlbum);
+        songUpdate.addToGenres(new HashSet<>(newGenres));
+
+        //save values
+/*        genreRepository.saveAll(newGenres);
+        albumRepository.save(newAlbum);*/
+
+        songUpdate.setUuid(songId);
+
+        return songRepository.save(songUpdate);
     }
 
     @Override
-    public void deleteSong(UUID songId) {
-
+    public String deleteSong(UUID songId) throws ApiCallException {
+        Song songDelete = this.getOneSong(songId);
+        songRepository.delete(songDelete);
+        return "Deleted song with id: " + songId;
     }
 }
