@@ -1,6 +1,6 @@
 package org.myapp.groovie.controller;
 
-import org.myapp.groovie.dto.UserDtoIn;
+import org.myapp.groovie.dto.in.UserDtoIn;
 import org.myapp.groovie.response.ApiCallResponse;
 import org.myapp.groovie.service.ApiExecutorService;
 import org.myapp.groovie.service.UserService;
