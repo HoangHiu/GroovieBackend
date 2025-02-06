@@ -12,6 +12,10 @@ import org.myapp.groovie.response.ApiCallException;
 import org.myapp.groovie.service.itf.IAlbumService;
 import org.myapp.groovie.service.itf.IGenreService;
 import org.myapp.groovie.service.itf.ISongService;
+import org.myapp.groovie.utility.specification.SongSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -38,12 +42,18 @@ public class SongServiceImpl implements ISongService {
     }
 
     @Override
-    public List<Song> getAllSongs() throws ApiCallException {
-        List<Song> songList = songRepository.findAll();
+    public Page<Song> getAllSongs(int pageNumber, int pageSize) throws ApiCallException {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Song> songList = songRepository.findAll(pageable);
         if (!songList.isEmpty()){
             return songList;
         }
         throw new ApiCallException("No song found", HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public Page<Song> searchSongs(String keywords, int pageNumber, int pageSize) throws ApiCallException {
+        return null;
     }
 
     @Override
@@ -113,5 +123,15 @@ public class SongServiceImpl implements ISongService {
         Song songDelete = this.getOneSong(songId);
         songRepository.delete(songDelete);
         return "Deleted song with id: " + songId;
+    }
+
+    @Override
+    public Page<Song> searchSong(String title, int pageNumber, int pageSize) throws ApiCallException {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Song> songPage = songRepository.findAll(SongSpecification.titleLike(title), pageable);
+        if (!songPage.isEmpty()){
+            return songPage;
+        }
+        throw new ApiCallException("No song found", HttpStatus.NOT_FOUND);
     }
 }

@@ -3,6 +3,8 @@ package org.myapp.groovie.controller;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.myapp.groovie.dto.in.SongDtoIn;
+import org.myapp.groovie.dto.in.SongSearchDtoIn;
+import org.myapp.groovie.dto.out.PageInfoDtoOut;
 import org.myapp.groovie.dto.out.SongDtoOut;
 import org.myapp.groovie.entity.song.Song;
 import org.myapp.groovie.response.ApiCallExecutor;
@@ -28,9 +30,25 @@ public class SongController {
     private String bucketName;
 
     @GetMapping("")
-    public ResponseEntity<ApiCallResponse<Object>> getAllSongs(){
+    public ResponseEntity<ApiCallResponse<Object>> getAllSongs(
+            @RequestParam(name = "page_number") int pageNumber,
+            @RequestParam(name = "page_size") int pageSize
+            ){
         return apiExecutorService.execute(() -> {
-            return new ApiCallResponse<>(songService.getAllSongs());
+            return new ApiCallResponse<>(
+                    PageInfoDtoOut.fromPage(songService.getAllSongs(pageNumber, pageSize)));
+        });
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiCallResponse<Object>> searchSongs(
+            @RequestParam(name = "title") String title,
+            @RequestParam(name = "page_number") int pageNumber,
+            @RequestParam(name = "page_size") int pageSize
+    ){
+        return apiExecutorService.execute(() -> {
+            return new ApiCallResponse<>(
+                    PageInfoDtoOut.fromPage(songService.searchSong(title, pageNumber, pageSize)));
         });
     }
 
