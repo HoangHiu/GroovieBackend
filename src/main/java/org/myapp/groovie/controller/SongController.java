@@ -29,6 +29,9 @@ public class SongController {
     @Value("${spring.data.aws.s3.song-bucket}")
     private String bucketName;
 
+    @Value("${spring.data.aws.s3.route.song-audio-route}")
+    private String audioRoute;
+
     @GetMapping("")
     public ResponseEntity<ApiCallResponse<Object>> getAllSongs(
             @RequestParam(name = "page_number") int pageNumber,
@@ -58,7 +61,7 @@ public class SongController {
     ){
         return apiExecutorService.execute(() -> {
             Song song = songService.getOneSong(UUID.fromString(songId));
-            String url = s3Service.getPresignedUrl(bucketName, song.getUuid() + ".mp3");
+            String url = s3Service.getPresignedUrl(bucketName, audioRoute + "/" + song.getUuid() + ".mp3");
            return new ApiCallResponse<>(SongDtoOut.fromSong(song, url));
         });
     }
@@ -68,7 +71,7 @@ public class SongController {
             @RequestBody SongDtoIn songDtoIn){
         return apiExecutorService.execute(() -> {
             Song song = songService.createSong(songDtoIn);
-            String url = s3Service.createPresignedUrl(bucketName, song.getUuid() + ".mp3");
+            String url = s3Service.createPresignedUrl(bucketName, audioRoute + "/" + song.getUuid() + ".mp3");
             return new ApiCallResponse<>(SongDtoOut.fromSong(song, url));
         });
     }
@@ -80,7 +83,7 @@ public class SongController {
     ){
         return apiExecutorService.execute(() -> {
             Song song = songService.updateSong(UUID.fromString(songId), songDtoIn);
-            String url = s3Service.createPresignedUrl(bucketName, song.getUuid() + ".mp3");
+            String url = s3Service.createPresignedUrl(bucketName, audioRoute + "/" + song.getUuid() + ".mp3");
             return new ApiCallResponse<>(SongDtoOut.fromSong(song, url));
         });
     }

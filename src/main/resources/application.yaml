@@ -19,6 +19,10 @@ spring:
         expiry: ${AWS_S3_EXPIRY:5}
         endpoint: ${AWS_S3_ENDPOINT:http://localhost:9000}
         song-bucket: ${AWS_S3_SONG_BUCKET:song}
+        album-bucket: ${AWS_S3_SONG_BUCKET:album}
+        route:
+          song-audio-route: ${AWS_S3_ALBUM_COVER_ROUTE:audio}
+          album-cover-route: ${AWS_S3_ALBUM_COVER_ROUTE:cover}
   security:
     user:
       name: ${ADMIN_NAME:Hieu}

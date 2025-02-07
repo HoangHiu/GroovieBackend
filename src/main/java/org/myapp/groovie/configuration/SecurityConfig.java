@@ -36,6 +36,7 @@ public class SecurityConfig {
                         requests.requestMatchers("/hello").permitAll()
                                 .requestMatchers("/auth/login").permitAll()
                                 .requestMatchers("/v1/song", "/v1/song/*").authenticated()
+                                .requestMatchers("/v1/album", "/v1/album/*").authenticated()
                                 .requestMatchers("/user").hasAnyRole("ADMIN", "MODERATOR"))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
