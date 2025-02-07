@@ -7,9 +7,13 @@ import org.myapp.groovie.repository.AlbumRepository;
 import org.myapp.groovie.response.ApiCallException;
 import org.myapp.groovie.service.itf.IAlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,13 +36,24 @@ public class AlbumServiceImpl implements IAlbumService {
     }
 
     @Override
-    public List<Album> getAllAlbums() {
-        return null;
+    public Page<Album> getAllAlbums(int pageNumber, int pageSize) throws ApiCallException{
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Album> albumPage = albumRepository.findAll(pageable);
+        if(!albumPage.isEmpty()){
+            return albumPage;
+        }
+        throw new ApiCallException("No album found", HttpStatus.NOT_FOUND);
     }
 
     @Override
     public Album createAlbum(AlbumDtoIn albumDtoIn) {
-        return null;
+        Album albumCreate = Album.fromDto(albumDtoIn);
+
+        //initial values
+        albumCreate.setUuid(UUID.randomUUID());
+        albumCreate.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+        return albumRepository.save(albumCreate);
     }
 
     @Override
@@ -63,5 +78,10 @@ public class AlbumServiceImpl implements IAlbumService {
             }
         }
         return albumList;
+    }
+
+    @Override
+    public Page<Album> searchAlbum(String title, int pageNumber, int pageSize) throws ApiCallException {
+        return null;
     }
 }

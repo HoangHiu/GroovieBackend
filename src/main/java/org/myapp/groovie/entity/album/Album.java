@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.myapp.groovie.dto.in.AlbumDtoIn;
 import org.myapp.groovie.entity.song.Song;
 
 import java.sql.Timestamp;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "albums")
+@Builder
 public class Album {
     @Id
     @Column(name = "uuid")
@@ -47,4 +49,13 @@ public class Album {
 
     @Column(name = "updated_at")
     Timestamp updatedAt;
+
+    public static Album fromDto(AlbumDtoIn albumDtoIn){
+        return Album.builder()
+                .title(albumDtoIn.getTitle())
+                .description(albumDtoIn.getDescription())
+                .totalDuration(albumDtoIn.getTotalDuration())
+                .releaseYear(albumDtoIn.getReleaseYear())
+                .build();
+    }
 }
