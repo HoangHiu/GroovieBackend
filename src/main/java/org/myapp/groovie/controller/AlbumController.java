@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("v1/album")
 @RequiredArgsConstructor
@@ -26,6 +28,17 @@ public class AlbumController {
 
     @Value("${spring.data.aws.s3.route.album-cover-route}")
     private String coverRoute;
+
+    @GetMapping("/{uuid}")
+    public ResponseEntity<ApiCallResponse<Object>> getOneAlbum(
+            @PathVariable("uuid") String albumId
+    ){
+        return apiExecutorService.execute(() -> {
+            Album album = albumService.getOneAlbum(UUID.fromString(albumId));
+            String url = s3Service.createPresignedUrl(bucketName, coverRoute + "/" + album.getUuid() + ".jpeg");
+            return new ApiCallResponse<>(AlbumDtoOut.fromAlbum(album, url));
+        });
+    }
 
     @GetMapping("")
     public ResponseEntity<ApiCallResponse<Object>> getAllAlbums(
@@ -45,6 +58,27 @@ public class AlbumController {
             Album album = albumService.createAlbum(albumDtoIn);
             String url = s3Service.createPresignedUrl(bucketName, coverRoute + "/" + album.getUuid() + ".jpeg");
             return new ApiCallResponse<>(AlbumDtoOut.fromAlbum(album, url));
+        });
+    }
+
+    @PutMapping("/{uuid}")
+    public ResponseEntity<ApiCallResponse<Object>> updateAlbum(
+            @PathVariable("uuid") String albumId,
+            @RequestBody AlbumDtoIn albumDtoIn
+    ){
+        return apiExecutorService.execute(() -> {
+            Album album = albumService.updateAlbum(UUID.fromString(albumId), albumDtoIn);
+            String url = s3Service.createPresignedUrl(bucketName, coverRoute + "/" + album.getUuid() + ".jpeg");
+            return new ApiCallResponse<>(AlbumDtoOut.fromAlbum(album, url));
+        });
+    }
+
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<ApiCallResponse<Object>> deleteAlbum(
+            @PathVariable("uuid") String albumId
+    ){
+        return apiExecutorService.execute(() -> {
+            return new ApiCallResponse<>(albumService.deleteAlbum(UUID.fromString(albumId)));
         });
     }
 }

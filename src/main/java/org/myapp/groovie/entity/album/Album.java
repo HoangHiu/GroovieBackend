@@ -39,8 +39,8 @@ public class Album {
 
     //Relation
     //Song
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "uuid")
-    @JsonBackReference
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "album", fetch = FetchType.EAGER)
+    @JsonManagedReference
     Set<Song> songs;
 
     //  Creation stuff

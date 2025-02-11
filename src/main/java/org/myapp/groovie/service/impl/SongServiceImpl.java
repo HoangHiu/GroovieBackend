@@ -18,9 +18,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -72,9 +74,16 @@ public class SongServiceImpl implements ISongService {
         List<Genre> newGenre = genreService.getGenresBasedOnIds(genreIds);
         Album newAlbum = albumService.getOneAlbum(albumId);
 
+        songCreate.setGenres(new HashSet<>(newGenre));
+        songCreate.setAlbum(newAlbum);
+
         //add to relations
         songCreate.addToGenres((new HashSet<>(newGenre)));
         songCreate.addToAlbum(newAlbum);
+
+        System.out.println("\n\n\n\n\n\n\n\n");
+        System.out.println(newAlbum.getSongs().stream().map(Song::getUuid).toList());
+        System.out.println("\n\n\n\n\n\n\n\n");
 
         //save relations
         genreRepository.saveAll(newGenre);
@@ -110,8 +119,8 @@ public class SongServiceImpl implements ISongService {
         songUpdate.addToGenres(new HashSet<>(newGenres));
 
         //save values
-/*        genreRepository.saveAll(newGenres);
-        albumRepository.save(newAlbum);*/
+        genreRepository.saveAll(newGenres);
+        albumRepository.save(newAlbum);
 
         songUpdate.setUuid(songId);
 
@@ -121,6 +130,7 @@ public class SongServiceImpl implements ISongService {
     @Override
     public String deleteSong(UUID songId) throws ApiCallException {
         Song songDelete = this.getOneSong(songId);
+//        songDelete.getGenres().remove();
         songRepository.delete(songDelete);
         return "Deleted song with id: " + songId;
     }

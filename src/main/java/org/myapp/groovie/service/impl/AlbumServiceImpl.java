@@ -3,10 +3,11 @@ package org.myapp.groovie.service.impl;
 import lombok.AllArgsConstructor;
 import org.myapp.groovie.dto.in.AlbumDtoIn;
 import org.myapp.groovie.entity.album.Album;
+import org.myapp.groovie.entity.song.Song;
 import org.myapp.groovie.repository.AlbumRepository;
+import org.myapp.groovie.repository.SongRepository;
 import org.myapp.groovie.response.ApiCallException;
 import org.myapp.groovie.service.itf.IAlbumService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class AlbumServiceImpl implements IAlbumService {
 
     private final AlbumRepository albumRepository;
+    private final SongRepository songRepository;
 
     @Override
     public Album getOneAlbum(UUID albumId) throws ApiCallException {
@@ -57,13 +59,26 @@ public class AlbumServiceImpl implements IAlbumService {
     }
 
     @Override
-    public Album updateAlbum(UUID albumId, AlbumDtoIn albumDtoIn) {
-        return null;
+    public Album updateAlbum(UUID albumId, AlbumDtoIn albumDtoIn) throws ApiCallException {
+        Album albumOrg = getOneAlbum(albumId);
+        Album albumUpdate = Album.fromDto(albumDtoIn);
+
+        //set init values
+        albumUpdate.setUuid(albumId);
+        albumUpdate.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        albumUpdate.setSongs(albumOrg.getSongs());
+        albumUpdate.setCreatedAt(albumOrg.getCreatedAt());
+
+        return albumRepository.save(albumUpdate);
     }
 
     @Override
-    public void deleteAlbum(UUID albumId) {
-
+    public String deleteAlbum(UUID albumId) throws ApiCallException {
+        Album albumOrg = getOneAlbum(albumId);
+        List<UUID> songs = albumOrg.getSongs().stream().map(Song::getUuid).toList();
+        songRepository.deleteAllById(albumOrg.getSongs().stream().map(Song::getUuid).toList());
+        albumRepository.delete(albumOrg);
+        return "Deleted album with id: " + albumId;
     }
 
     @Override

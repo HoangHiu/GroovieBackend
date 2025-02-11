@@ -43,16 +43,16 @@ public class Song {
 
 //    Foreign relations
 //    Genre
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "song_genre_relations",
             joinColumns = @JoinColumn(name = "song_uuid"),
             inverseJoinColumns = @JoinColumn(name = "genre_uuid"))
     @JsonManagedReference
     Set<Genre> genres;
 //Album
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "album_uuid")
-    @JsonManagedReference
+    @JsonBackReference
     Album album;
 
 //  Creation stuff
