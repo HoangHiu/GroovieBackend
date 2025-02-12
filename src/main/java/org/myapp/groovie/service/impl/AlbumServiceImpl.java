@@ -69,14 +69,15 @@ public class AlbumServiceImpl implements IAlbumService {
         albumUpdate.setSongs(albumOrg.getSongs());
         albumUpdate.setCreatedAt(albumOrg.getCreatedAt());
 
+        //set relational values
+        songRepository.saveAll(albumUpdate.getSongs());
+
         return albumRepository.save(albumUpdate);
     }
 
     @Override
     public String deleteAlbum(UUID albumId) throws ApiCallException {
         Album albumOrg = getOneAlbum(albumId);
-        List<UUID> songs = albumOrg.getSongs().stream().map(Song::getUuid).toList();
-        songRepository.deleteAllById(albumOrg.getSongs().stream().map(Song::getUuid).toList());
         albumRepository.delete(albumOrg);
         return "Deleted album with id: " + albumId;
     }
