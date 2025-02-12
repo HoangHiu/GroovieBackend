@@ -18,9 +18,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -72,6 +74,9 @@ public class SongServiceImpl implements ISongService {
         List<Genre> newGenre = genreService.getGenresBasedOnIds(genreIds);
         Album newAlbum = albumService.getOneAlbum(albumId);
 
+        songCreate.setGenres(new HashSet<>(newGenre));
+        songCreate.setAlbum(newAlbum);
+
         //add to relations
         songCreate.addToGenres((new HashSet<>(newGenre)));
         songCreate.addToAlbum(newAlbum);
@@ -86,12 +91,11 @@ public class SongServiceImpl implements ISongService {
 
     @Override
     public Song updateSong(UUID songId, SongDtoIn songDtoIn) throws ApiCallException {
-        Song songUpdate = Song.fromSongDtoIn(songDtoIn);
         Song songOrg = this.getOneSong(songId);
 
         //set initial values
-        songUpdate.setCreatedAt(songOrg.getCreatedAt());
-        songUpdate.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        songOrg.getValuesFromDto(songDtoIn);
+        songOrg.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
         //get relation ids
         List<UUID> genreIds = songDtoIn.getGenreIds().stream().map(UUID::fromString).toList();
@@ -101,26 +105,22 @@ public class SongServiceImpl implements ISongService {
         List<Genre> newGenres = genreService.getGenresBasedOnIds(genreIds);
         Album newAlbum = albumService.getOneAlbum(albumId);
 
-        //remove original relation values
-        songUpdate.removeFromAlbum(songOrg.getAlbum());
-        songUpdate.removeFromGenres(songOrg.getGenres());
-
         //set new relation values
-        songUpdate.addToAlbum(newAlbum);
-        songUpdate.addToGenres(new HashSet<>(newGenres));
+        songOrg.setAlbum(newAlbum);
+        songOrg.setGenres(new HashSet<>(newGenres));
 
         //save values
-/*        genreRepository.saveAll(newGenres);
-        albumRepository.save(newAlbum);*/
-
-        songUpdate.setUuid(songId);
-
-        return songRepository.save(songUpdate);
+        genreRepository.saveAll(newGenres);
+        albumRepository.save(newAlbum);
+        return songRepository.save(songOrg);
     }
 
     @Override
     public String deleteSong(UUID songId) throws ApiCallException {
         Song songDelete = this.getOneSong(songId);
+        songDelete.removeAllGenres();
+        songDelete.removeAlbum();
+        songRepository.save(songDelete);
         songRepository.delete(songDelete);
         return "Deleted song with id: " + songId;
     }

@@ -1,6 +1,5 @@
 package org.myapp.groovie.dto.in;
 
-import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

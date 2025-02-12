@@ -13,7 +13,7 @@ public interface IAlbumService {
     Page<Album> getAllAlbums(int pageNumber, int pageSize) throws ApiCallException;
     Album createAlbum(AlbumDtoIn albumDtoIn) throws ApiCallException;
     Album updateAlbum(UUID albumId, AlbumDtoIn albumDtoIn) throws ApiCallException;
-    void deleteAlbum(UUID albumId) throws ApiCallException;
+    String deleteAlbum(UUID albumId) throws ApiCallException;
     List<Album> getAlbumsBasedOnIds(List<UUID> albumIds) throws ApiCallException;
     Page<Album> searchAlbum(String title, int pageNumber, int pageSize) throws ApiCallException;
 }

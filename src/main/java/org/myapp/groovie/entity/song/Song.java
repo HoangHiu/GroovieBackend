@@ -43,16 +43,16 @@ public class Song {
 
 //    Foreign relations
 //    Genre
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "song_genre_relations",
             joinColumns = @JoinColumn(name = "song_uuid"),
             inverseJoinColumns = @JoinColumn(name = "genre_uuid"))
     @JsonManagedReference
     Set<Genre> genres;
 //Album
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "album_uuid")
-    @JsonManagedReference
+    @JsonBackReference
     Album album;
 
 //  Creation stuff
@@ -78,6 +78,29 @@ public class Song {
 
     public void removeFromGenres(Set<Genre> genres){
         genres.stream().map(g -> g.getSongs().remove(this));
+    }
+
+    public void removeAllGenres(){
+        if(!this.getGenres().isEmpty()){
+            for(Genre genre : new HashSet<>(this.genres)){
+                genre.getSongs().remove(this);
+            }
+            this.getGenres().clear();
+        }
+    }
+
+    public void removeAlbum(){
+        if(this.album != null){
+            this.album.getSongs().remove(this);
+        }
+        this.album = null;
+    }
+
+    public void getValuesFromDto(SongDtoIn songDtoIn){
+        this.setTitle(songDtoIn.getTitle());
+        this.setDuration(songDtoIn.getDuration());
+        this.setFileSize(songDtoIn.getFileSize());
+        this.setLanguages(songDtoIn.getLanguages());
     }
 
     public static Song fromSongDtoIn(SongDtoIn songDtoIn){
