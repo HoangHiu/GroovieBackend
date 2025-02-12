@@ -39,7 +39,7 @@ public class Album {
 
     //Relation
     //Song
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "album", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "album", fetch = FetchType.EAGER)
     @JsonManagedReference
     Set<Song> songs;
 

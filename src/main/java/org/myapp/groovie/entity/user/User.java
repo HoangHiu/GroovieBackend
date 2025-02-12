@@ -35,4 +35,8 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "group_uuid"))
     @JsonManagedReference
     Set<Group> groups;
+
+    @OneToOne
+    @JoinColumn(name = "personal_detail_id", referencedColumnName = "uuid")
+    PersonalDetail personalDetail;
 }

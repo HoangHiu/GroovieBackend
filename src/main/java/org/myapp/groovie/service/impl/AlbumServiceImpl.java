@@ -78,6 +78,7 @@ public class AlbumServiceImpl implements IAlbumService {
     @Override
     public String deleteAlbum(UUID albumId) throws ApiCallException {
         Album albumOrg = getOneAlbum(albumId);
+        songRepository.deleteAllById(albumOrg.getSongs().stream().map(Song::getUuid).toList());
         albumRepository.delete(albumOrg);
         return "Deleted album with id: " + albumId;
     }
