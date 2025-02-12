@@ -80,6 +80,29 @@ public class Song {
         genres.stream().map(g -> g.getSongs().remove(this));
     }
 
+    public void removeAllGenres(){
+        if(!this.getGenres().isEmpty()){
+            for(Genre genre : new HashSet<>(this.genres)){
+                genre.getSongs().remove(this);
+            }
+            this.getGenres().clear();
+        }
+    }
+
+    public void removeAlbum(){
+        if(this.album != null){
+            this.album.getSongs().remove(this);
+        }
+        this.album = null;
+    }
+
+    public void getValuesFromDto(SongDtoIn songDtoIn){
+        this.setTitle(songDtoIn.getTitle());
+        this.setDuration(songDtoIn.getDuration());
+        this.setFileSize(songDtoIn.getFileSize());
+        this.setLanguages(songDtoIn.getLanguages());
+    }
+
     public static Song fromSongDtoIn(SongDtoIn songDtoIn){
         return Song.builder()
                 .title(songDtoIn.getTitle())

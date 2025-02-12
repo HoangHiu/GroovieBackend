@@ -81,10 +81,6 @@ public class SongServiceImpl implements ISongService {
         songCreate.addToGenres((new HashSet<>(newGenre)));
         songCreate.addToAlbum(newAlbum);
 
-        System.out.println("\n\n\n\n\n\n\n\n");
-        System.out.println(newAlbum.getSongs().stream().map(Song::getUuid).toList());
-        System.out.println("\n\n\n\n\n\n\n\n");
-
         //save relations
         genreRepository.saveAll(newGenre);
         albumRepository.save(newAlbum);
@@ -95,12 +91,11 @@ public class SongServiceImpl implements ISongService {
 
     @Override
     public Song updateSong(UUID songId, SongDtoIn songDtoIn) throws ApiCallException {
-        Song songUpdate = Song.fromSongDtoIn(songDtoIn);
         Song songOrg = this.getOneSong(songId);
 
         //set initial values
-        songUpdate.setCreatedAt(songOrg.getCreatedAt());
-        songUpdate.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        songOrg.getValuesFromDto(songDtoIn);
+        songOrg.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
         //get relation ids
         List<UUID> genreIds = songDtoIn.getGenreIds().stream().map(UUID::fromString).toList();
@@ -110,27 +105,22 @@ public class SongServiceImpl implements ISongService {
         List<Genre> newGenres = genreService.getGenresBasedOnIds(genreIds);
         Album newAlbum = albumService.getOneAlbum(albumId);
 
-        //remove original relation values
-        songUpdate.removeFromAlbum(songOrg.getAlbum());
-        songUpdate.removeFromGenres(songOrg.getGenres());
-
         //set new relation values
-        songUpdate.addToAlbum(newAlbum);
-        songUpdate.addToGenres(new HashSet<>(newGenres));
+        songOrg.setAlbum(newAlbum);
+        songOrg.setGenres(new HashSet<>(newGenres));
 
         //save values
         genreRepository.saveAll(newGenres);
         albumRepository.save(newAlbum);
-
-        songUpdate.setUuid(songId);
-
-        return songRepository.save(songUpdate);
+        return songRepository.save(songOrg);
     }
 
     @Override
     public String deleteSong(UUID songId) throws ApiCallException {
         Song songDelete = this.getOneSong(songId);
-//        songDelete.getGenres().remove();
+        songDelete.removeAllGenres();
+        songDelete.removeAlbum();
+        songRepository.save(songDelete);
         songRepository.delete(songDelete);
         return "Deleted song with id: " + songId;
     }
