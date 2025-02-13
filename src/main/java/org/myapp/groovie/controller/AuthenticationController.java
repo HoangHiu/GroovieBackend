@@ -1,6 +1,7 @@
 package org.myapp.groovie.controller;
 
 import org.myapp.groovie.dto.in.UserDtoIn;
+import org.myapp.groovie.entity.user.User;
 import org.myapp.groovie.response.ApiCallResponse;
 import org.myapp.groovie.service.ApiExecutorService;
 import org.myapp.groovie.service.UserService;
@@ -20,6 +21,13 @@ public class AuthenticationController {
     public ResponseEntity<ApiCallResponse<Object>> login(@RequestBody UserDtoIn userDtoIn){
         return apiExecutorService.execute(() -> {
             return new ApiCallResponse<>(userService.authenticate(userDtoIn));
+        });
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<ApiCallResponse<Object>> register(@RequestBody UserDtoIn userDtoIn){
+        return apiExecutorService.execute(() -> {
+           return new ApiCallResponse<>(userService.register(userDtoIn));
         });
     }
 }
