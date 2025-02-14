@@ -1,5 +1,6 @@
 package org.myapp.groovie.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -43,6 +44,7 @@ public class PersonalDetail {
     String location;
 
     @OneToOne(mappedBy = "personalDetail")
+    @JsonBackReference
     User user;
 
     @Column(name = "created_at")

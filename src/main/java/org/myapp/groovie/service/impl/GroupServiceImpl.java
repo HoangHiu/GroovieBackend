@@ -9,6 +9,11 @@ import org.myapp.groovie.service.itf.IGroupService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class GroupServiceImpl implements IGroupService {
@@ -18,8 +23,21 @@ public class GroupServiceImpl implements IGroupService {
     public Group getGroupByRole(Role role) throws ApiCallException {
         Group group = groupRepository.findByRole(role);
         if(group == null){
-            throw new ApiCallException("Group with role: " + role.name() + " doesn's exists", HttpStatus.NOT_FOUND);
+            throw new ApiCallException("Group with role: " + role.name() + " doesn't exists", HttpStatus.NOT_FOUND);
         }
         return group;
+    }
+
+    @Override
+    public Set<Group> getGroupsByIds(Set<UUID> groupIds) throws ApiCallException{
+        Set<Group> groups = new HashSet<>();
+        for (UUID id : groupIds){
+            Optional<Group> group = groupRepository.findById(id);
+            if (group.isEmpty()){
+                throw new ApiCallException("Group with id: " + id + " doesn't exists", HttpStatus.NOT_FOUND);
+            }
+            groups.add(group.get());
+        }
+        return groups;
     }
 }

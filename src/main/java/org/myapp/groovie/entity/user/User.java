@@ -36,15 +36,16 @@ public class User {
 
     @OneToOne
     @JoinColumn(name = "personal_detail_id", referencedColumnName = "uuid")
+    @JsonManagedReference
     PersonalDetail personalDetail;
 
-    public void addToGroup(Group group){
-        group.getUsers().add(this);
+    public void addToGroups(Set<Group> groups){
+        groups.stream().map(g -> g.getUsers().add(this));
         if (this.groups != null){
-            this.groups.add(group);
+            this.groups.addAll(groups);
         }else{
             this.groups = new HashSet<>();
-            this.groups.add(group);
+            this.groups.addAll(groups);
         }
     }
 }

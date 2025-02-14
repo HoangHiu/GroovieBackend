@@ -1,7 +1,7 @@
 package org.myapp.groovie.service;
 
 import lombok.RequiredArgsConstructor;
-import org.myapp.groovie.dto.in.UserDtoIn;
+import org.myapp.groovie.dto.in.AccountDtoIn;
 import org.myapp.groovie.entity.user.Group;
 import org.myapp.groovie.entity.user.PersonalDetail;
 import org.myapp.groovie.entity.user.Role;
@@ -32,20 +32,20 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
-    public String authenticate(UserDtoIn userDtoIn) throws ApiCallException {
+    public String authenticate(AccountDtoIn accountDtoIn) throws ApiCallException {
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(userDtoIn.getUsername(), userDtoIn.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(accountDtoIn.getUsername(), accountDtoIn.getPassword()));
 
         if(authentication.isAuthenticated()){
-            return jwtService.generateToken(userDtoIn.getUsername());
+            return jwtService.generateToken(accountDtoIn.getUsername());
         }else{
             throw new ApiCallException("No user found!!!", HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    public User register(UserDtoIn userDtoIn) throws ApiCallException{
-        String username = userDtoIn.getUsername();
+    public User register(AccountDtoIn accountDtoIn) throws ApiCallException{
+        String username = accountDtoIn.getUsername();
         User userCheck = userRepository.getUserByUsername(username);
 
         if(userCheck != null){
@@ -55,20 +55,20 @@ public class AuthService {
         Group group = groupService.getGroupByRole(Role.REGULAR);
         PersonalDetail personalDetail = PersonalDetail.builder()
                 .uuid(UUID.randomUUID())
-                .name(userDtoIn.getUsername())
+                .name(accountDtoIn.getUsername())
                 .createdAt(new Timestamp(System.currentTimeMillis()))
                 .build();
 
         //save new user
         User newUser = User.builder()
                 .uuid(UUID.randomUUID())
-                .username(userDtoIn.getUsername())
-                .password(passwordEncoder.encode(userDtoIn.getPassword()))
+                .username(accountDtoIn.getUsername())
+                .password(passwordEncoder.encode(accountDtoIn.getPassword()))
                 .personalDetail(personalDetail)
                 .build();
 
         //update relations
-        newUser.addToGroup(group);
+        newUser.addToGroups(Set.of(group));
 
         personalDetailRepository.save(personalDetail);
 //        groupRepository.save(group);
