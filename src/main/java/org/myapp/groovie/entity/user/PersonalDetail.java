@@ -4,9 +4,15 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.myapp.groovie.dto.in.PersonalDetailDtoIn;
 
+import javax.swing.text.DateFormatter;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Entity
@@ -29,7 +35,7 @@ public class PersonalDetail {
     String email;
 
     @Column(name = "date_of_birth")
-    LocalDate dateOfBirth;
+    Timestamp dateOfBirth;
 
     @Column(name = "gender")
     String gender;
@@ -52,4 +58,14 @@ public class PersonalDetail {
 
     @Column(name = "updated_at")
     Timestamp updatedAt;
+
+    public void updateFromDtoIn(PersonalDetailDtoIn personalDetailDtoIn) {
+        this.name = personalDetailDtoIn.getName();
+        this.email = personalDetailDtoIn.getEmail();
+        this.dateOfBirth = Timestamp.from(Instant.ofEpochMilli(personalDetailDtoIn.getDateOfBirth()));
+        this.gender = personalDetailDtoIn.getGender();
+        this.phoneNumber = personalDetailDtoIn.getPhoneNumber();
+        this.bio = personalDetailDtoIn.getBio();
+        this.location = personalDetailDtoIn.getLocation();
+    }
 }

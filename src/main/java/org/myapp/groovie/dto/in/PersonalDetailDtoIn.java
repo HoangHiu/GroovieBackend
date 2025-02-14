@@ -19,7 +19,7 @@ import java.util.UUID;
 public class PersonalDetailDtoIn {
     String name;
     String email;
-    LocalDate dateOfBirth;
+    Long dateOfBirth;
     String gender;
     String phoneNumber;
     String bio;

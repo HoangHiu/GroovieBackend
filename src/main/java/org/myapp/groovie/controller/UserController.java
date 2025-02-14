@@ -54,7 +54,7 @@ public class UserController {
     @PutMapping("/info")
     public ResponseEntity<ApiCallResponse<Object>> updateUserInfo(
             @RequestBody PersonalDetailDtoIn personalDetailDtoIn,
-            @RequestParam(name = "userid") String userId,
+            @RequestParam(name = "user_id") String userId,
             Authentication authentication
             ){
         return apiExecutorService.execute(() -> {
