@@ -1,18 +1,13 @@
 package org.myapp.groovie.filter;
 
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.myapp.groovie.entity.system.SystemUserDetails;
-import org.myapp.groovie.response.ApiCallException;
 import org.myapp.groovie.service.JwtService;
 import org.myapp.groovie.service.SystemUserDetailService;
-import org.myapp.groovie.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

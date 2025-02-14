@@ -34,10 +34,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests ->
                         requests.requestMatchers("/hello").permitAll()
-                                .requestMatchers("/auth/login").permitAll()
+                                .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/v1/song", "/v1/song/*").authenticated()
                                 .requestMatchers("/v1/album", "/v1/album/*").authenticated()
-                                .requestMatchers("/user").hasAnyRole("ADMIN", "MODERATOR"))
+                                .requestMatchers("/user", "/user/**").hasAnyRole("ADMIN", "MODERATOR"))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

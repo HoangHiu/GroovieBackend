@@ -3,11 +3,9 @@ package org.myapp.groovie.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -16,10 +14,10 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "uuid")
     UUID uuid;
 
@@ -38,5 +36,16 @@ public class User {
 
     @OneToOne
     @JoinColumn(name = "personal_detail_id", referencedColumnName = "uuid")
+    @JsonManagedReference
     PersonalDetail personalDetail;
+
+    public void addToGroups(Set<Group> groups){
+        groups.stream().map(g -> g.getUsers().add(this));
+        if (this.groups != null){
+            this.groups.addAll(groups);
+        }else{
+            this.groups = new HashSet<>();
+            this.groups.addAll(groups);
+        }
+    }
 }
