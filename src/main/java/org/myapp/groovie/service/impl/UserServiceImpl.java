@@ -86,4 +86,13 @@ public class UserServiceImpl implements IUserService {
             return userRepository.save(newUser);
         }
 
+    @Override
+    public User getOneByUsername(String username) throws ApiCallException {
+        User user = userRepository.getUserByUsername(username);
+        if(user != null){
+            return userRepository.getUserByUsername(username);
+        }
+        throw new ApiCallException("User with username: " + username + " doesn't exists", HttpStatus.NOT_FOUND);
+    }
+
 }

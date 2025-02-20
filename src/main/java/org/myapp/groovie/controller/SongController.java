@@ -12,6 +12,7 @@ import org.myapp.groovie.response.ApiCallResponse;
 import org.myapp.groovie.service.ApiExecutorService;
 import org.myapp.groovie.service.itf.IS3Service;
 import org.myapp.groovie.service.itf.ISongService;
+import org.myapp.groovie.service.itf.IUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class SongController {
     private final ApiExecutorService<Object> apiExecutorService = new ApiExecutorService<>();
     private final ISongService songService;
     private final IS3Service s3Service;
+    private final IUserService userService;
 
     @Value("${spring.data.aws.s3.song-bucket}")
     private String bucketName;

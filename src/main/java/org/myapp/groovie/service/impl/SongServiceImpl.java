@@ -82,8 +82,8 @@ public class SongServiceImpl implements ISongService {
         songCreate.addToAlbum(newAlbum);
 
         //save relations
-        genreRepository.saveAll(newGenre);
-        albumRepository.save(newAlbum);
+//        genreRepository.saveAll(newGenre);
+//        albumRepository.save(newAlbum);
         songRepository.save(songCreate);
 
         return songCreate;
