@@ -11,6 +11,7 @@ import org.myapp.groovie.service.itf.IAlbumService;
 import org.myapp.groovie.service.itf.IS3Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -52,10 +53,11 @@ public class AlbumController {
 
     @PostMapping("")
     public ResponseEntity<ApiCallResponse<Object>> createAlbum(
-            @RequestBody AlbumDtoIn albumDtoIn
+            @RequestBody AlbumDtoIn albumDtoIn,
+            Authentication authentication
             ){
         return apiExecutorService.execute(() -> {
-            Album album = albumService.createAlbum(albumDtoIn);
+            Album album = albumService.createAlbum(albumDtoIn, authentication);
             String url = s3Service.createPresignedUrl(bucketName, coverRoute + "/" + album.getUuid() + ".jpeg");
             return new ApiCallResponse<>(AlbumDtoOut.fromAlbum(album, url));
         });

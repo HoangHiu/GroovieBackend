@@ -4,14 +4,18 @@ import lombok.AllArgsConstructor;
 import org.myapp.groovie.dto.in.AlbumDtoIn;
 import org.myapp.groovie.entity.album.Album;
 import org.myapp.groovie.entity.song.Song;
+import org.myapp.groovie.entity.user.User;
 import org.myapp.groovie.repository.AlbumRepository;
 import org.myapp.groovie.repository.SongRepository;
+import org.myapp.groovie.repository.UserRepository;
 import org.myapp.groovie.response.ApiCallException;
 import org.myapp.groovie.service.itf.IAlbumService;
+import org.myapp.groovie.service.itf.IUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -26,6 +30,7 @@ public class AlbumServiceImpl implements IAlbumService {
 
     private final AlbumRepository albumRepository;
     private final SongRepository songRepository;
+    private final UserRepository userRepository;
 
     @Override
     public Album getOneAlbum(UUID albumId) throws ApiCallException {
@@ -48,12 +53,15 @@ public class AlbumServiceImpl implements IAlbumService {
     }
 
     @Override
-    public Album createAlbum(AlbumDtoIn albumDtoIn) {
+    public Album createAlbum(AlbumDtoIn albumDtoIn, Authentication authentication) {
         Album albumCreate = Album.fromDto(albumDtoIn);
+
+        User user = userRepository.getUserByUsername(authentication.getName());
 
         //initial values
         albumCreate.setUuid(UUID.randomUUID());
         albumCreate.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        albumCreate.setUser(user);
 
         return albumRepository.save(albumCreate);
     }

@@ -4,6 +4,7 @@ package org.myapp.groovie.entity.user;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.myapp.groovie.entity.album.Album;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -38,6 +39,10 @@ public class User {
     @JoinColumn(name = "personal_detail_id", referencedColumnName = "uuid")
     @JsonManagedReference
     PersonalDetail personalDetail;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    Set<Album> albums;
 
     public void addToGroups(Set<Group> groups){
         groups.stream().map(g -> g.getUsers().add(this));

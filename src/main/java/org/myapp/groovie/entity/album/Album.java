@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.myapp.groovie.dto.in.AlbumDtoIn;
 import org.myapp.groovie.entity.song.Song;
+import org.myapp.groovie.entity.user.User;
 
 import java.sql.Timestamp;
 import java.util.Set;
@@ -42,6 +43,11 @@ public class Album {
     @OneToMany(mappedBy = "album", fetch = FetchType.EAGER)
     @JsonManagedReference
     Set<Song> songs;
+
+    @ManyToOne
+    @JoinColumn(name = "user_uuid")
+    @JsonBackReference
+    User user;
 
     //  Creation stuff
     @Column(name = "created_at")

@@ -10,7 +10,6 @@ import java.util.UUID;
 
 public interface IUserService {
     List<User> getAllUsers() throws ApiCallException;
-
     User getOneById(UUID userId) throws ApiCallException;
     User create(UserDtoIn userDtoIn) throws ApiCallException;
 }
