@@ -1,7 +1,9 @@
 package org.myapp.groovie.service.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.myapp.groovie.dto.in.AlbumDtoIn;
+import org.myapp.groovie.dto.out.AlbumDtoOut;
 import org.myapp.groovie.entity.album.Album;
 import org.myapp.groovie.entity.song.Song;
 import org.myapp.groovie.entity.user.User;
@@ -10,8 +12,10 @@ import org.myapp.groovie.repository.SongRepository;
 import org.myapp.groovie.repository.UserRepository;
 import org.myapp.groovie.response.ApiCallException;
 import org.myapp.groovie.service.itf.IAlbumService;
-import org.myapp.groovie.service.itf.IUserService;
+import org.myapp.groovie.service.itf.IS3Service;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -25,12 +29,19 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AlbumServiceImpl implements IAlbumService {
 
     private final AlbumRepository albumRepository;
     private final SongRepository songRepository;
     private final UserRepository userRepository;
+    private final IS3Service s3Service;
+
+    @Value("${spring.data.aws.s3.album-bucket}")
+    private String bucketName;
+
+    @Value("${spring.data.aws.s3.route.album-cover-route}")
+    private String coverRoute;
 
     @Override
     public Album getOneAlbum(UUID albumId) throws ApiCallException {
@@ -43,11 +54,17 @@ public class AlbumServiceImpl implements IAlbumService {
     }
 
     @Override
-    public Page<Album> getAllAlbums(int pageNumber, int pageSize) throws ApiCallException{
+    public Page<AlbumDtoOut> getAllAlbums(int pageNumber, int pageSize) throws ApiCallException{
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Album> albumPage = albumRepository.findAll(pageable);
         if(!albumPage.isEmpty()){
-            return albumPage;
+            return new PageImpl<>(albumPage.getContent()
+                    .stream()
+                    .map(a -> {
+                        String albumCoverId = coverRoute + "/" + a.getUuid() + ".jpeg";
+                        return AlbumDtoOut.fromAlbum(a, s3Service.getPresignedUrl(bucketName, albumCoverId));
+                    })
+                    .toList());
         }
         throw new ApiCallException("No album found", HttpStatus.NOT_FOUND);
     }

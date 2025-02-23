@@ -2,6 +2,7 @@ package org.myapp.groovie.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.myapp.groovie.dto.in.AlbumDtoIn;
+import org.myapp.groovie.dto.in.S3ObjectDtoIn;
 import org.myapp.groovie.dto.out.AlbumDtoOut;
 import org.myapp.groovie.dto.out.PageInfoDtoOut;
 import org.myapp.groovie.entity.album.Album;
@@ -14,7 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("v1/album")
@@ -48,6 +52,18 @@ public class AlbumController {
     ){
         return apiExecutorService.execute(() -> {
             return new ApiCallResponse<>(PageInfoDtoOut.fromPage(albumService.getAllAlbums(pageNumber, pageSize)));
+        });
+    }
+
+    @PostMapping("/get-bulk-cover")
+    public ResponseEntity<ApiCallResponse<Object>> getBulkAlbumCover(
+            @RequestBody List<String> objectNames
+    ){
+        return apiExecutorService.execute(() -> {
+            Set<String> objectNamesAlt = objectNames.stream().map(so ->
+                coverRoute + "/" + so + ".jpeg")
+                    .collect(Collectors.toSet());
+            return new ApiCallResponse<>(s3Service.getBulkPresignedUrl(bucketName, objectNamesAlt));
         });
     }
 

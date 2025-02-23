@@ -17,6 +17,9 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +38,17 @@ public class S3ServiceImpl implements IS3Service {
     @Override
     public void doesObjectExists(String buketName, String objectName) {
 
+    }
+
+    @Override
+    public List<String> getBulkPresignedUrl(String bucketName, Set<String> objectNames){
+        List<String> urlList = new ArrayList<>();
+
+        for(String objectName : objectNames){
+            urlList.add(this.getPresignedUrl(bucketName, objectName));
+        }
+
+        return urlList;
     }
 
     @Override
