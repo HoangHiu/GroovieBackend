@@ -63,8 +63,17 @@ public class SongController {
     ){
         return apiExecutorService.execute(() -> {
             Song song = songService.getOneSong(UUID.fromString(songId));
-            String url = s3Service.getPresignedUrl(bucketName, audioRoute + "/" + song.getUuid() + ".mp3");
-           return new ApiCallResponse<>(SongDtoOut.fromSong(song, url));
+           return new ApiCallResponse<>(SongDtoOut.fromSong(song, ""));
+        });
+    }
+
+    @GetMapping("/{uuid}/audio")
+    public ResponseEntity<ApiCallResponse<Object>> getSongFrom(
+            @PathVariable("uuid") String songId
+    ){
+        return apiExecutorService.execute(() -> {
+            String url = s3Service.getPresignedUrl(bucketName, audioRoute + "/" + songId + ".mp3");
+            return new ApiCallResponse<>(url);
         });
     }
 

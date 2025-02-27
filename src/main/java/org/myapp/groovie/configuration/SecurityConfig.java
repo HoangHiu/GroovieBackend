@@ -41,8 +41,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests ->
                         requests.requestMatchers("/hello").permitAll()
                                 .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/v1/song", "/v1/song/*").authenticated()
-                                .requestMatchers("/v1/album", "/v1/album/*").authenticated()
+                                .requestMatchers("/v1/song", "/v1/song/**").authenticated()
+                                .requestMatchers("/v1/album", "/v1/album/**").authenticated()
                                 .requestMatchers("/user", "/user/**", "/user/**/**").hasAnyRole("ADMIN", "MODERATOR"))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

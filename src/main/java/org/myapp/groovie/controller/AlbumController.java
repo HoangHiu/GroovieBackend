@@ -55,6 +55,15 @@ public class AlbumController {
         });
     }
 
+    @GetMapping("/{uuid}/getSongs")
+    public ResponseEntity<ApiCallResponse<Object>> getSongsFromAlbum(
+            @PathVariable(name = "uuid") String albumId
+    ){
+        return apiExecutorService.execute(() -> {
+            return new ApiCallResponse<>(albumService.getSongsFromAlbumId(UUID.fromString(albumId)));
+        });
+    }
+
     @PostMapping("/get-bulk-cover")
     public ResponseEntity<ApiCallResponse<Object>> getBulkAlbumCover(
             @RequestBody List<String> objectNames

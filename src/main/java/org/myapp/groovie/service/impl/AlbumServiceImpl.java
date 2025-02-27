@@ -126,4 +126,10 @@ public class AlbumServiceImpl implements IAlbumService {
     public Page<Album> searchAlbum(String title, int pageNumber, int pageSize) throws ApiCallException {
         return null;
     }
+
+    @Override
+    public List<Song> getSongsFromAlbumId(UUID albumId) throws ApiCallException {
+        Album album = getOneAlbum(albumId);
+        return album.getSongs().stream().toList();
+    }
 }
