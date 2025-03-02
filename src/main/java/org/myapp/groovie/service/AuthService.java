@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,15 +34,18 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public String authenticate(AccountDtoIn accountDtoIn) throws ApiCallException {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(accountDtoIn.getUsername(), accountDtoIn.getPassword()));
+        try {
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(accountDtoIn.getUsername(), accountDtoIn.getPassword()));
 
-        if(authentication.isAuthenticated()){
-            return jwtService.generateToken(accountDtoIn.getUsername());
-        }else{
-            throw new ApiCallException("No user found!!!", HttpStatus.BAD_REQUEST);
+            if (authentication.isAuthenticated()) {
+                return jwtService.generateToken(accountDtoIn.getUsername());
+            } else {
+                throw new ApiCallException("No user found!!!", HttpStatus.BAD_REQUEST);
+            }
+        } catch (AuthenticationException e) {
+            throw new ApiCallException("Invalid username or password!", HttpStatus.BAD_REQUEST);
         }
-
     }
 
     public User register(AccountDtoIn accountDtoIn) throws ApiCallException{

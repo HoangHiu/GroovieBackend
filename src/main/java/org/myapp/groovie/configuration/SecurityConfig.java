@@ -5,6 +5,7 @@ import org.myapp.groovie.service.SystemUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -39,8 +40,10 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests ->
-                        requests.requestMatchers("/hello").permitAll()
-                                .requestMatchers("/auth/**").permitAll()
+                        requests.requestMatchers(HttpMethod.GET, "/v1/song", "/v1/song/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/v1/album", "/v1/album/**").permitAll()
+                                .requestMatchers("/hello").permitAll()
+                                .requestMatchers("/auth/login", "/auth/register").permitAll()
                                 .requestMatchers("/v1/song", "/v1/song/**").authenticated()
                                 .requestMatchers("/v1/album", "/v1/album/**").authenticated()
                                 .requestMatchers("/user", "/user/**", "/user/**/**").hasAnyRole("ADMIN", "MODERATOR"))
