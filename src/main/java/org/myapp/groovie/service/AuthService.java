@@ -10,6 +10,7 @@ import org.myapp.groovie.repository.PersonalDetailRepository;
 import org.myapp.groovie.repository.UserRepository;
 import org.myapp.groovie.response.ApiCallException;
 import org.myapp.groovie.service.itf.IGroupService;
+import org.myapp.groovie.service.itf.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,6 +33,8 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final IUserService userService;
+
 
     public String authenticate(AccountDtoIn accountDtoIn) throws ApiCallException {
         try {
@@ -39,7 +42,8 @@ public class AuthService {
                     .authenticate(new UsernamePasswordAuthenticationToken(accountDtoIn.getUsername(), accountDtoIn.getPassword()));
 
             if (authentication.isAuthenticated()) {
-                return jwtService.generateToken(accountDtoIn.getUsername());
+                User user = userService.getOneByUsername(accountDtoIn.getUsername());
+                return jwtService.generateToken(accountDtoIn.getUsername(), user.getGroups().parallelStream().map(g -> g.getRole().toString()).toList());
             } else {
                 throw new ApiCallException("No user found!!!", HttpStatus.BAD_REQUEST);
             }
@@ -53,7 +57,7 @@ public class AuthService {
         User userCheck = userRepository.getUserByUsername(username);
 
         if(userCheck != null){
-            throw new ApiCallException("User with username: " + username + " already existsted", HttpStatus.NOT_FOUND);
+            throw new ApiCallException("User with username: " + username + " already existed", HttpStatus.NOT_FOUND);
         }
 
         Group group = groupService.getGroupByRole(Role.REGULAR);
