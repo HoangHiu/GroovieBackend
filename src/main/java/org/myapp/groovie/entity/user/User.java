@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.myapp.groovie.entity.album.Album;
+import org.myapp.groovie.entity.playlist.Playlist;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,6 +44,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
     Set<Album> albums;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    Set<Playlist> playlists;
 
     public void addToGroups(Set<Group> groups){
         groups.stream().map(g -> g.getUsers().add(this));

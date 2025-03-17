@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.myapp.groovie.dto.in.SongDtoIn;
 import org.myapp.groovie.entity.album.Album;
+import org.myapp.groovie.entity.playlist.Playlist;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -49,6 +50,13 @@ public class Song {
             inverseJoinColumns = @JoinColumn(name = "genre_uuid"))
     @JsonManagedReference
     Set<Genre> genres;
+//Playlist
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "song_playlist_relations",
+            joinColumns = @JoinColumn(name = "song_uuid"),
+            inverseJoinColumns = @JoinColumn(name = "playlist_uuid"))
+    @JsonBackReference
+    Set<Playlist> playlists;
 //Album
     @ManyToOne
     @JoinColumn(name = "album_uuid")
