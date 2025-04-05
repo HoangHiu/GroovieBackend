@@ -10,7 +10,7 @@ import org.myapp.groovie.entity.song.Song;
 import java.util.UUID;
 
 @Entity
-@Table(name = "song_features")
+@Table(name = "song_specs")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -24,33 +24,18 @@ public class Feature {
     @JoinColumn(name = "song_id", nullable = false, unique = true)
     private Song song;
 
+    @Column(name = "duration")
+    private Float duration;
+
     @Column(name = "tempo")
     private Float tempo;
 
-    @Column(name = "key_signature")
-    private Integer keySignature;
+    @Column(name = "spectral_centroid")
+    private Float spectral_centroid;
 
-    @Column(name = "mode")
-    private Integer mode;
+    @Column(name = "chromagram")
+    private Float chromagram;
 
-    @Column(name = "danceability")
-    private Float danceability;
-
-    @Column(name = "energy")
-    private Float energy;
-
-    @Column(name = "valence")
-    private Float valence;
-
-    @Column(name = "instrumentalness")
-    private Float instrumentalness;
-
-    @Column(name = "loudness")
-    private Float loudness;
-
-    @Column(name = "speechiness")
-    private Float speechiness;
-
-    @Column(name = "acousticness")
-    private Float acousticness;
+    @Column(name = "rms")
+    private Float rms;
 }

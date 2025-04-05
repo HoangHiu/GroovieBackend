@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -64,6 +65,16 @@ public class SongController {
         return apiExecutorService.execute(() -> {
             Song song = songService.getOneSong(UUID.fromString(songId));
            return new ApiCallResponse<>(SongDtoOut.fromSong(song, ""));
+        });
+    }
+
+    @PostMapping("/bulk-get-songs")
+    public ResponseEntity<ApiCallResponse<Object>> getSongsFromIds(
+            @RequestBody List<String> songsIds
+            ){
+        return apiExecutorService.execute(() -> {
+            List<SongDtoOut> songDtoOut = songService.bulkGetSongsFromIds(songsIds).stream().map(s -> SongDtoOut.fromSong(s, "")).toList();
+            return new ApiCallResponse<>(songDtoOut);
         });
     }
 

@@ -5,6 +5,8 @@ import org.myapp.groovie.dto.in.AlbumDtoIn;
 import org.myapp.groovie.dto.in.S3ObjectDtoIn;
 import org.myapp.groovie.dto.out.AlbumDtoOut;
 import org.myapp.groovie.dto.out.PageInfoDtoOut;
+import org.myapp.groovie.dto.request.AddSongsToAlbumRequest;
+import org.myapp.groovie.dto.request.DeleteSongFromAlbumRequest;
 import org.myapp.groovie.entity.album.Album;
 import org.myapp.groovie.response.ApiCallResponse;
 import org.myapp.groovie.service.ApiExecutorService;
@@ -61,6 +63,18 @@ public class AlbumController {
     ){
         return apiExecutorService.execute(() -> {
             return new ApiCallResponse<>(albumService.getSongsFromAlbumId(UUID.fromString(albumId)));
+        });
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<ApiCallResponse<Object>> getPersonalAlbums(
+            @RequestParam(name = "page_number") int pageNumber,
+            @RequestParam(name = "page_size") int pageSize,
+            Authentication authentication
+    ){
+        return apiExecutorService.execute(() -> {
+            String username = authentication.getName();
+            return new ApiCallResponse<>(PageInfoDtoOut.fromPage(albumService.getAlbumsFromUsername(username, pageNumber, pageSize)));
         });
     }
 

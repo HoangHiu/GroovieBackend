@@ -10,6 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface PlaylistRepository extends JpaRepository<Playlist, UUID> {
-    @Query("select p from Playlist p join fetch User u where u.username = :username")
+    @Query("SELECT p FROM Playlist p LEFT JOIN FETCH p.user u WHERE u.username = :username")
     List<Playlist> findAllByUsername(String username);
 }

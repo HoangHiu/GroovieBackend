@@ -1,6 +1,5 @@
 package org.myapp.groovie.service.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.myapp.groovie.dto.in.AlbumDtoIn;
 import org.myapp.groovie.dto.out.AlbumDtoOut;
@@ -13,6 +12,7 @@ import org.myapp.groovie.repository.UserRepository;
 import org.myapp.groovie.response.ApiCallException;
 import org.myapp.groovie.service.itf.IAlbumService;
 import org.myapp.groovie.service.itf.IS3Service;
+import org.myapp.groovie.service.itf.ISongService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,10 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -130,6 +127,31 @@ public class AlbumServiceImpl implements IAlbumService {
     @Override
     public List<Song> getSongsFromAlbumId(UUID albumId) throws ApiCallException {
         Album album = getOneAlbum(albumId);
-        return album.getSongs().stream().toList();
+        return album.getSongs().stream()
+                .sorted(Comparator.comparing(Song::getCreatedAt))
+                .toList();
     }
+
+    @Override
+    public Page<AlbumDtoOut> getAlbumsFromUsername(String username, int pageNumber, int pageSize) throws ApiCallException {
+        User user = userRepository.getUserByUsername(username);
+        if(user == null){
+            throw new ApiCallException("User with username: " + username + " not found", HttpStatus.NOT_FOUND);
+        }
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Album> albumPage = albumRepository.findAllByUser(user, pageable);
+        if(!albumPage.isEmpty()){
+            return new PageImpl<>(albumPage.getContent()
+                    .stream()
+                    .map(a -> {
+                        String albumCoverId = coverRoute + "/" + a.getUuid() + ".jpeg";
+                        return AlbumDtoOut.fromAlbum(a, s3Service.getPresignedUrl(bucketName, albumCoverId));
+                    })
+                    .toList());
+        }
+        throw new ApiCallException("No album found", HttpStatus.NOT_FOUND);
+
+    }
+
 }

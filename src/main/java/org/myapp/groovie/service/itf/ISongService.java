@@ -5,6 +5,7 @@ import org.myapp.groovie.entity.song.Song;
 import org.myapp.groovie.response.ApiCallException;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ISongService {
@@ -15,4 +16,5 @@ public interface ISongService {
     Song updateSong(UUID songId, SongDtoIn songDtoIn) throws ApiCallException;
     String deleteSong(UUID songId) throws ApiCallException;
     Page<Song> searchSong(String title, int pageNumber, int pageSize) throws ApiCallException;
+    List<Song> bulkGetSongsFromIds(List<String> songIds);
 }

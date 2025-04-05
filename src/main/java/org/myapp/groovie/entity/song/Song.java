@@ -11,6 +11,7 @@ import org.myapp.groovie.entity.playlist.Playlist;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,6 +42,15 @@ public class Song {
 
     @Column(name = "play_count")
     long playCount;
+
+//    @ManyToMany
+//    @JoinTable(
+//            name = "featured_artists",
+//            joinColumns = @JoinColumn(name = "your_entity_id"),
+//            inverseJoinColumns = @JoinColumn(name = "artist_id")
+//    )
+//    List<User> featuredArtists;
+
 
 //    Foreign relations
 //    Genre

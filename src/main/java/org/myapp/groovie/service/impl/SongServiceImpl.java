@@ -134,4 +134,10 @@ public class SongServiceImpl implements ISongService {
         }
         throw new ApiCallException("No song found", HttpStatus.NOT_FOUND);
     }
+
+    @Override
+    public List<Song> bulkGetSongsFromIds(List<String> songIds) {
+        List<UUID> songUuids = songIds.stream().map(UUID::fromString).toList();
+        return songRepository.findAllByUuidIn(songUuids);
+    }
 }

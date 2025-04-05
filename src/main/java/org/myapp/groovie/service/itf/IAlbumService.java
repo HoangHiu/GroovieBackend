@@ -21,4 +21,6 @@ public interface IAlbumService {
     Page<Album> searchAlbum(String title, int pageNumber, int pageSize) throws ApiCallException;
 
     List<Song> getSongsFromAlbumId(UUID albumId) throws ApiCallException;
+
+    Page<AlbumDtoOut> getAlbumsFromUsername(String username, int pageNumber, int pageSize) throws ApiCallException;
 }

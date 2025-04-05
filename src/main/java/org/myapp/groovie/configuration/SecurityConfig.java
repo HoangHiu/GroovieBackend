@@ -24,6 +24,8 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
 @Configuration
 public class SecurityConfig {
     @Autowired
@@ -39,14 +41,13 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(requests ->
-                        requests.requestMatchers(HttpMethod.GET, "/v1/song", "/v1/song/**").permitAll()
+                .authorizeHttpRequests(requestMatcherRegistry ->
+                        requestMatcherRegistry
+                                .requestMatchers(HttpMethod.GET, "/v1/song", "/v1/song/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/v1/album", "/v1/album/**").permitAll()
-                                .requestMatchers("/hello").permitAll()
                                 .requestMatchers("/auth/login", "/auth/register").permitAll()
-                                .requestMatchers("/v1/song", "/v1/song/**").authenticated()
-                                .requestMatchers("/v1/album", "/v1/album/**").authenticated()
-                                .requestMatchers("/user", "/user/**", "/user/**/**").hasAnyRole("ADMIN", "MODERATOR"))
+                                .requestMatchers("/user", "/user/**").hasAnyRole("ADMIN", "MODERATOR")
+                                .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -72,7 +73,7 @@ public class SecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("http://localhost:5173")); // React app URL
+        corsConfig.setAllowedOrigins(List.of("http://localhost:5173","http://localhost:5174"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         corsConfig.setAllowCredentials(true); // Allows sending cookies if needed

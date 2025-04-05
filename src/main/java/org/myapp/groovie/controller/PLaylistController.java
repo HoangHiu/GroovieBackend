@@ -2,6 +2,7 @@ package org.myapp.groovie.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.myapp.groovie.dto.in.PLaylistDtoIn;
+import org.myapp.groovie.dto.out.PlaylistDtoOut;
 import org.myapp.groovie.dto.request.AddSongsToPlaylistRequest;
 import org.myapp.groovie.dto.request.DeleteSongFromPlaylistRequest;
 import org.myapp.groovie.response.ApiCallResponse;
@@ -13,11 +14,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/playlist")
+@RequestMapping("/v1/playlist")
 @RequiredArgsConstructor
 public class PLaylistController {
     private final ApiExecutorService<Object> apiExecutorService = new ApiExecutorService<>();
     private final IPlaylistService playlistService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiCallResponse<Object>> getPlaylistFromId(
+            @PathVariable(name = "id") String playlistId
+    ){
+        return apiExecutorService.execute(() -> {
+            return new ApiCallResponse<>(PlaylistDtoOut.fromPlaylist(playlistService.getPLaylistfromId(UUID.fromString(playlistId))));
+        });
+    }
 
     @GetMapping("/me")
     public ResponseEntity<ApiCallResponse<Object>> getPersonalPlaylists(){
