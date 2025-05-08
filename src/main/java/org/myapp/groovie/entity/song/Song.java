@@ -61,10 +61,7 @@ public class Song {
     @JsonManagedReference
     Set<Genre> genres;
 //Playlist
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "song_playlist_relations",
-            joinColumns = @JoinColumn(name = "song_uuid"),
-            inverseJoinColumns = @JoinColumn(name = "playlist_uuid"))
+    @ManyToMany(mappedBy = "songs", fetch = FetchType.EAGER)
     @JsonBackReference
     Set<Playlist> playlists;
 //Album

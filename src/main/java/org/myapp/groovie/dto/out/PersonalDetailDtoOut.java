@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PersonalDetailDtoOut {
     String name;
-    String email;
     Timestamp dateOfBirth;
     String gender;
     String phoneNumber;
@@ -24,7 +23,6 @@ public class PersonalDetailDtoOut {
     public static PersonalDetailDtoOut fromPersonalDetail(PersonalDetail personalDetail){
         return PersonalDetailDtoOut.builder()
                 .name(personalDetail.getName())
-                .email(personalDetail.getEmail())
                 .dateOfBirth(personalDetail.getDateOfBirth())
                 .gender(personalDetail.getGender())
                 .phoneNumber(personalDetail.getPhoneNumber())

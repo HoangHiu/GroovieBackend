@@ -17,6 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Feature {
     @Id
+    @GeneratedValue
     @Column(name = "uuid")
     private UUID uuid;
 

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IPlaylistService {
-    List<Playlist> getPersonalPlaylist();
+    List<PlaylistDtoOut> getPersonalPlaylist();
     Playlist getPLaylistfromId(UUID playlistId) throws ApiCallException;
     PlaylistDtoOut createPersonalPlaylist(PLaylistDtoIn pLaylistDtoIn) throws ApiCallException;
     PlaylistDtoOut updatePersonalPlaylist(UUID uuid, PLaylistDtoIn pLaylistDtoIn) throws ApiCallException;

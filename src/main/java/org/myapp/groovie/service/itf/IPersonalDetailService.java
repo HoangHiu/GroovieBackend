@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface IPersonalDetailService {
     PersonalDetail update(UUID userId, PersonalDetailDtoIn personalDetailDtoIn) throws ApiCallException;
+    PersonalDetail update(String username, PersonalDetailDtoIn personalDetailDtoIn) throws ApiCallException;
+
 }

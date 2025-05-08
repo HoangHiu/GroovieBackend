@@ -54,10 +54,15 @@ public class AuthService {
 
     public User register(AccountDtoIn accountDtoIn) throws ApiCallException{
         String username = accountDtoIn.getUsername();
-        User userCheck = userRepository.getUserByUsername(username);
+        String email = accountDtoIn.getEmail();
+        User userCheckName = userRepository.getUserByUsername(username);
+        User userCheckMail = userRepository.getUserByEmail(email);
 
-        if(userCheck != null){
+        if(userCheckName != null){
             throw new ApiCallException("User with username: " + username + " already existed", HttpStatus.NOT_FOUND);
+        }
+        if(userCheckMail != null){
+            throw new ApiCallException("User with email: " + email + " already existed", HttpStatus.NOT_FOUND);
         }
 
         Group group = groupService.getGroupByRole(Role.REGULAR);
@@ -72,6 +77,7 @@ public class AuthService {
                 .uuid(UUID.randomUUID())
                 .username(accountDtoIn.getUsername())
                 .password(passwordEncoder.encode(accountDtoIn.getPassword()))
+                .email(accountDtoIn.getEmail())
                 .personalDetail(personalDetail)
                 .build();
 

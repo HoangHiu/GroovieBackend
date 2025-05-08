@@ -2,10 +2,7 @@ package org.myapp.groovie.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 import java.util.UUID;
@@ -16,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name="groups")
+@ToString
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,4 +33,11 @@ public class Group {
     @ManyToMany(mappedBy = "groups", fetch = FetchType.LAZY)
     @JsonBackReference
     Set<User> users;
+
+    public Group(UUID uuid, String name, String description, Role role){
+        this.uuid = uuid;
+        this.name = name;
+        this.description = description;
+        this.role = role;
+    }
 }

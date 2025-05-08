@@ -18,7 +18,6 @@ import java.util.UUID;
 @Builder
 public class PersonalDetailDtoIn {
     String name;
-    String email;
     Long dateOfBirth;
     String gender;
     String phoneNumber;

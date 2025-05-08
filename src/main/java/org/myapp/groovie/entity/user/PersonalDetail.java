@@ -31,9 +31,6 @@ public class PersonalDetail {
     @Column(name = "name")
     String name;
 
-    @Column(name = "email")
-    String email;
-
     @Column(name = "date_of_birth")
     Timestamp dateOfBirth;
 
@@ -61,7 +58,6 @@ public class PersonalDetail {
 
     public void updateFromDtoIn(PersonalDetailDtoIn personalDetailDtoIn) {
         this.name = personalDetailDtoIn.getName();
-        this.email = personalDetailDtoIn.getEmail();
         this.dateOfBirth = Timestamp.from(Instant.ofEpochMilli(personalDetailDtoIn.getDateOfBirth()));
         this.gender = personalDetailDtoIn.getGender();
         this.phoneNumber = personalDetailDtoIn.getPhoneNumber();

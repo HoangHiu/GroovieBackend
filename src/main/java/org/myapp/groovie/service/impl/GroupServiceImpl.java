@@ -9,10 +9,7 @@ import org.myapp.groovie.service.itf.IGroupService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -39,5 +36,10 @@ public class GroupServiceImpl implements IGroupService {
             groups.add(group.get());
         }
         return groups;
+    }
+
+    @Override
+    public List<Group> getAllGroups() throws ApiCallException {
+        return groupRepository.findAll();
     }
 }

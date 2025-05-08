@@ -12,4 +12,10 @@ import lombok.Setter;
 public class AccountDtoIn {
     String username;
     String password;
+    String email;
+
+    public AccountDtoIn(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 }

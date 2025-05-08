@@ -19,11 +19,19 @@ spring:
         expiry: ${AWS_S3_EXPIRY:5}
         endpoint: ${AWS_S3_ENDPOINT:http://localhost:9000}
         song-bucket: ${AWS_S3_SONG_BUCKET:song}
-        album-bucket: ${AWS_S3_SONG_BUCKET:album}
+        album-bucket: ${AWS_S3_ALBUM_BUCKET:album}
+        user-bucket: ${AWS_S3_USER_BUCKET:user}
         route:
-          song-audio-route: ${AWS_S3_ALBUM_COVER_ROUTE:audio}
+          song-audio-route: ${AWS_S3_SONG_AUDIO_ROUTE:audio}
           album-cover-route: ${AWS_S3_ALBUM_COVER_ROUTE:cover}
+          user-cover-route: ${AWS_S3_USER_COVER_ROUTE:cover}
   security:
     user:
       name: ${ADMIN_NAME:Hieu}
       password: ${ADMIN_PASSWORD:210503}
+  main:
+    allow-circular-references: true
+  stripe:
+    api-secret-key: sk_test_51RI1KjBV063LVQnenAQKpkxycYZc8KMBlnBYWHrqpPv9Gwwo49eyxq1M1D8l3xPlYh92gKj18tqmwi5pbG1agqDm00zRXNW8xX
+    webhook-endpoint-secret: whsec_59a6cddd1917e12ab37e9b8004c01cc5a30ebd0a4cf9404da6c114d1cba15041
+    artist-subscription-price-id: price_1RKAz1BV063LVQneQyCyxYVK

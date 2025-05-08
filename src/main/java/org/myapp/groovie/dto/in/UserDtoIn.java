@@ -14,8 +14,8 @@ import java.util.Set;
 public class UserDtoIn extends AccountDtoIn{
     Set<String> groupIds;
 
-    public UserDtoIn(String username, String password, Set<String> groupIds){
-        super(username, password);
+    public UserDtoIn(String username, String password, String email, Set<String> groupIds){
+        super(username, password, email);
         this.groupIds = groupIds;
     }
 }

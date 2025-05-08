@@ -19,7 +19,8 @@ public class PlaylistDtoOut {
     UUID uuid;
     String name;
     String description;
-    Set<SongDtoOut> songs;
+    List<SongDtoOut> songs;
+    List<String> coverUrls;
 
     public static PlaylistDtoOut fromPlaylist(Playlist playlist){
         return PlaylistDtoOut.builder()
@@ -28,7 +29,16 @@ public class PlaylistDtoOut {
                 .description(playlist.getDescription())
                 .songs(playlist.getSongs().stream().map(
                         s -> SongDtoOut.fromSong(s, "")
-                ).collect(Collectors.toSet()))
+                ).toList())
+                .build();
+    }
+
+    public static PlaylistDtoOut fromPlaylistWoSongs(Playlist playlist, List<String> coverUrls){
+        return PlaylistDtoOut.builder()
+                .uuid(playlist.getUuid())
+                .name(playlist.getName())
+                .description(playlist.getDescription())
+                .coverUrls(coverUrls)
                 .build();
     }
 }

@@ -29,10 +29,10 @@ public class SongDtoOut {
     String url;
     Set<String> genres;
     AlbumDtoOut albumDtoOut;
+    String coverUrl;
 
     public static SongDtoOut fromSong(Song song, String url){
         Set<String> genreList = song.getGenres().stream().map(Genre::getName).collect(Collectors.toSet());
-        String albumName = song.getAlbum().getTitle();
 
         return SongDtoOut.builder()
                 .uuid(song.getUuid())
@@ -44,6 +44,22 @@ public class SongDtoOut {
                 .genres(genreList)
                 .albumDtoOut(AlbumDtoOut.fromAlbum(song.getAlbum(), ""))
                 .url(url)
+                .build();
+    }
+
+    public static SongDtoOut fromSongWithCover(Song song, String coverUrl){
+        Set<String> genreList = song.getGenres().stream().map(Genre::getName).collect(Collectors.toSet());
+
+        return SongDtoOut.builder()
+                .uuid(song.getUuid())
+                .title(song.getTitle())
+                .duration(song.getDuration())
+                .fileSize(song.getFileSize())
+                .languages(song.getLanguages())
+                .playCount(song.getPlayCount())
+                .genres(genreList)
+                .albumDtoOut(AlbumDtoOut.fromAlbum(song.getAlbum(), ""))
+                .coverUrl(coverUrl)
                 .build();
     }
 }

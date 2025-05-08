@@ -1,5 +1,6 @@
 package org.myapp.groovie.service;
 
+import com.stripe.exception.StripeException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.myapp.groovie.response.ApiCallException;
 import org.myapp.groovie.response.ApiCallExecutor;

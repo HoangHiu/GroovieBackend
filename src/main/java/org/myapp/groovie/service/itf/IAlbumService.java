@@ -2,6 +2,7 @@ package org.myapp.groovie.service.itf;
 
 import org.myapp.groovie.dto.in.AlbumDtoIn;
 import org.myapp.groovie.dto.out.AlbumDtoOut;
+import org.myapp.groovie.dto.request.DeleteSongFromAlbumRequest;
 import org.myapp.groovie.entity.album.Album;
 import org.myapp.groovie.entity.song.Song;
 import org.myapp.groovie.response.ApiCallException;
@@ -13,7 +14,7 @@ import java.util.UUID;
 
 public interface IAlbumService {
     Album getOneAlbum(UUID albumId) throws ApiCallException;
-    Page<AlbumDtoOut> getAllAlbums(int pageNumber, int pageSize) throws ApiCallException;
+    Page<AlbumDtoOut> getAllAlbums(String title, String userId, int pageNumber, int pageSize) throws ApiCallException;
     Album createAlbum(AlbumDtoIn albumDtoIn, Authentication authentication) throws ApiCallException;
     Album updateAlbum(UUID albumId, AlbumDtoIn albumDtoIn) throws ApiCallException;
     String deleteAlbum(UUID albumId) throws ApiCallException;
@@ -23,4 +24,6 @@ public interface IAlbumService {
     List<Song> getSongsFromAlbumId(UUID albumId) throws ApiCallException;
 
     Page<AlbumDtoOut> getAlbumsFromUsername(String username, int pageNumber, int pageSize) throws ApiCallException;
+
+    String deleteSongFromAlbum(DeleteSongFromAlbumRequest request) throws ApiCallException;
 }

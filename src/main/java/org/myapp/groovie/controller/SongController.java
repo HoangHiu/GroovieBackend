@@ -73,8 +73,7 @@ public class SongController {
             @RequestBody List<String> songsIds
             ){
         return apiExecutorService.execute(() -> {
-            List<SongDtoOut> songDtoOut = songService.bulkGetSongsFromIds(songsIds).stream().map(s -> SongDtoOut.fromSong(s, "")).toList();
-            return new ApiCallResponse<>(songDtoOut);
+            return new ApiCallResponse<>(songService.bulkGetSongsFromIds(songsIds));
         });
     }
 

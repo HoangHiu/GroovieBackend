@@ -10,9 +10,7 @@ import org.myapp.groovie.entity.song.Song;
 import org.myapp.groovie.entity.user.User;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @AllArgsConstructor
@@ -33,9 +31,15 @@ public class Playlist {
     @Column(name = "description")
     String description;
 
-    @ManyToMany(mappedBy = "playlists", fetch = FetchType.EAGER)
     @JsonManagedReference
-    Set<Song> songs = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+            name = "song_playlist_relations",
+            joinColumns = @JoinColumn(name = "playlist_uuid"),
+            inverseJoinColumns = @JoinColumn(name = "song_uuid")
+    )
+    @OrderColumn(name = "song_order")
+    List<Song> songs = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_uuid")

@@ -18,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Table(name = "users")
+@ToString
 public class User {
     @Id
     @Column(name = "uuid")
@@ -28,6 +29,9 @@ public class User {
 
     @Column(name = "password")
     String password;
+
+    @Column(name = "email")
+    String email;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_group",

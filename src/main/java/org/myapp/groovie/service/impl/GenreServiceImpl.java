@@ -24,7 +24,7 @@ public class GenreServiceImpl implements IGenreService {
 
     @Override
     public List<Genre> getAllGenres() {
-        return null;
+        return genreRepository.findAll();
     }
 
     @Override

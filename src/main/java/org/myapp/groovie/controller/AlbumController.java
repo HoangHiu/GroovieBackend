@@ -5,7 +5,6 @@ import org.myapp.groovie.dto.in.AlbumDtoIn;
 import org.myapp.groovie.dto.in.S3ObjectDtoIn;
 import org.myapp.groovie.dto.out.AlbumDtoOut;
 import org.myapp.groovie.dto.out.PageInfoDtoOut;
-import org.myapp.groovie.dto.request.AddSongsToAlbumRequest;
 import org.myapp.groovie.dto.request.DeleteSongFromAlbumRequest;
 import org.myapp.groovie.entity.album.Album;
 import org.myapp.groovie.response.ApiCallResponse;
@@ -42,18 +41,20 @@ public class AlbumController {
     ){
         return apiExecutorService.execute(() -> {
             Album album = albumService.getOneAlbum(UUID.fromString(albumId));
-            String url = s3Service.createPresignedUrl(bucketName, coverRoute + "/" + album.getUuid() + ".jpeg");
+            String url = s3Service.getPresignedUrl(bucketName, coverRoute + "/" + album.getUuid() + ".jpeg");
             return new ApiCallResponse<>(AlbumDtoOut.fromAlbum(album, url));
         });
     }
 
-    @GetMapping("")
+    @GetMapping("/search")
     public ResponseEntity<ApiCallResponse<Object>> getAllAlbums(
+            @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "userId", required = false) String userId,
             @RequestParam(name = "page_number") int pageNumber,
             @RequestParam(name = "page_size") int pageSize
     ){
         return apiExecutorService.execute(() -> {
-            return new ApiCallResponse<>(PageInfoDtoOut.fromPage(albumService.getAllAlbums(pageNumber, pageSize)));
+            return new ApiCallResponse<>(PageInfoDtoOut.fromPage(albumService.getAllAlbums(title, userId, pageNumber, pageSize)));
         });
     }
 
@@ -99,6 +100,16 @@ public class AlbumController {
             Album album = albumService.createAlbum(albumDtoIn, authentication);
             String url = s3Service.createPresignedUrl(bucketName, coverRoute + "/" + album.getUuid() + ".jpeg");
             return new ApiCallResponse<>(AlbumDtoOut.fromAlbum(album, url));
+        });
+    }
+
+    @PostMapping("/remove-song")
+    public ResponseEntity<ApiCallResponse<Object>> removeSongFromAlbum(
+            @RequestBody DeleteSongFromAlbumRequest deleteSongFromAlbumRequest,
+            Authentication authentication
+    ){
+        return apiExecutorService.execute(() -> {
+            return new ApiCallResponse<>(albumService.deleteSongFromAlbum(deleteSongFromAlbumRequest));
         });
     }
 

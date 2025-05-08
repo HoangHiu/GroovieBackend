@@ -11,8 +11,10 @@ import org.myapp.groovie.repository.PlaylistRepository;
 import org.myapp.groovie.repository.SongRepository;
 import org.myapp.groovie.response.ApiCallException;
 import org.myapp.groovie.service.itf.IPlaylistService;
+import org.myapp.groovie.service.itf.IS3Service;
 import org.myapp.groovie.service.itf.ISongService;
 import org.myapp.groovie.service.itf.IUserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,10 +31,26 @@ public class PlaylistServiceImpl implements IPlaylistService {
     private final SongRepository songRepository;
     private final ISongService songService;
     private final IUserService userService;
+    private final IS3Service s3Service;
+
+    @Value("${spring.data.aws.s3.album-bucket}")
+    private String bucketName;
+
+    @Value("${spring.data.aws.s3.route.album-cover-route}")
+    private String coverRoute;
 
     @Override
-    public List<Playlist> getPersonalPlaylist() {
-        return playlistRepository.findAllByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+    public List<PlaylistDtoOut> getPersonalPlaylist() {
+        List<PlaylistDtoOut> res = new ArrayList<>();
+
+        List<Playlist> playlists = playlistRepository.findAllByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        for(Playlist p : playlists){
+            Set<String> albumIds = p.getSongs().stream().map(s -> s.getAlbum().getUuid().toString()).collect(Collectors.toSet());
+            List<String> albumCoverUrls = albumIds.stream().map(a ->  s3Service.getPresignedUrl(bucketName, coverRoute + "/" + a + ".jpeg")).toList();
+            res.add(PlaylistDtoOut.fromPlaylistWoSongs(p, albumCoverUrls));
+        }
+
+        return res;
     }
 
     @Override
@@ -73,19 +92,21 @@ public class PlaylistServiceImpl implements IPlaylistService {
     @Override
     public List<SongDtoOut> getSongsFromPlaylistId(UUID uuid) throws ApiCallException {
         Playlist playlist = getPLaylistfromId(uuid);
-        return playlist.getSongs().stream().map(s -> SongDtoOut.fromSong(s, "")).toList();
+        return playlist.getSongs().stream().map(s ->
+                SongDtoOut.fromSong(s, s3Service.getPresignedUrl(bucketName, coverRoute + "/" + s.getAlbum().getUuid() + ".jpeg")))
+                .toList();
     }
 
     @Override
     @Transactional
     public PlaylistDtoOut addSongsToPlaylist(UUID playlistId, List<String> songIds) throws ApiCallException {
         Playlist playlist = getPLaylistfromId(playlistId);
-        Set<Song> fetchedSongs = new HashSet<>();
+        List<Song> fetchedSongs = new ArrayList<>();
         for (String songId : songIds){
             fetchedSongs.add(songService.getOneSong(UUID.fromString(songId)));
         }
 
-        Set<Song> orgSongs = playlist.getSongs();
+        List<Song> orgSongs = playlist.getSongs();
         orgSongs.addAll(fetchedSongs);
         playlist.setSongs(orgSongs);
 
@@ -103,7 +124,7 @@ public class PlaylistServiceImpl implements IPlaylistService {
         Playlist playlist = getPLaylistfromId(playlistId);
         Song fetchedSong = songService.getOneSong(UUID.fromString(songId));
 
-        Set<Song> orgSongs = playlist.getSongs();
+        List<Song> orgSongs = playlist.getSongs();
         orgSongs.remove(fetchedSong);
 
         for (Song s : orgSongs){

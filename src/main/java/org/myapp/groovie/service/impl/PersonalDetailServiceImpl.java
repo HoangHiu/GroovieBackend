@@ -29,4 +29,15 @@ public class PersonalDetailServiceImpl implements IPersonalDetailService {
 
         return personalDetailRepository.save(personalDetail);
     }
+
+    @Override
+    public PersonalDetail update(String username, PersonalDetailDtoIn personalDetailDtoIn) throws ApiCallException {
+        User user = userService.getOneByUsername(username);
+        PersonalDetail personalDetail = user.getPersonalDetail();
+
+        personalDetail.updateFromDtoIn(personalDetailDtoIn);
+        personalDetail.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+        return personalDetailRepository.save(personalDetail);
+    }
 }
