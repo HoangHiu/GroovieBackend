@@ -32,6 +32,6 @@ spring:
   main:
     allow-circular-references: true
   stripe:
-    api-secret-key: sk_test_51RI1KjBV063LVQnenAQKpkxycYZc8KMBlnBYWHrqpPv9Gwwo49eyxq1M1D8l3xPlYh92gKj18tqmwi5pbG1agqDm00zRXNW8xX
-    webhook-endpoint-secret: whsec_59a6cddd1917e12ab37e9b8004c01cc5a30ebd0a4cf9404da6c114d1cba15041
-    artist-subscription-price-id: price_1RKAz1BV063LVQneQyCyxYVK
+    api-secret-key: 
+    webhook-endpoint-secret:
+    artist-subscription-price-id:
